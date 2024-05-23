@@ -231,8 +231,74 @@ And, voila ... the output of the program is:
 result=[1,3,4,7,8]
 ```
 
-Just how cool is that?
+Just how cool is that? Take some time and play with the code in [`code/high_order_functions.py`](./code/high_order_functions.py) (or run it on Compiler Explorer [here](https://godbolt.org/z/oj4bT1a4E)).
 
-Take some time and play with the code in [`code/high_order_functions.py`](./code/high_order_functions.py) (or run it on Compiler Explorer [here](https://godbolt.org/z/oj4bT1a4E)) and see if you can develop some muscle memory for using functions as parameters! Try modifying the `less_than` function so that `sorted` returns the list sorted in the opposite direction. What happens if `less_than` returns `0` in every case? The more you work with this new technique of passing functions as parameters, the more comfortable you will feel.
+Okay, that's cool, but ... we have no _proof_ that Python actually used our function, do we? It could have simply just sorted in ascending order by "guessing" that's what we wanted! To see whether our `less_than` function is actually being used, let's do two things.
+
+First, let's rewrite `less_than` (don't change the name!) to be something that will actually sort the values into descending order. I bet that you can see how to do that, but here's how I did it:
+
+```Python
+def less_than(left, right):
+    if left < right:
+        return 1
+    elif left == right:
+        return 0
+    return -1
+```
+
+Okay, the moment of truth will be seeing what this code prints after our change:
+
+```Python
+    list = [8,4,1,3,7]
+    result = sorted(list, key=functools.cmp_to_key(less_than))
+    print(f"{result=}")
+```
+```
+result=[8, 7, 4, 3, 1]
+```
+
+Okay, our confidence is growing! Now, let's work path two for guaranteeing that Python is actually using our `less_than` function. We will add a small call to `print` at the top of the `less_than` function and log the values of left and right. Then, when we invoke `sorted` with it as a parameter, we should get some visual indication that it is being used!
+
+```Python
+def less_than(left, right):
+    print(f"Comparing {left} to {right}.")
+    if left < right:
+        return 1
+    elif left == right:
+        return 0
+    return -1
+```
+
+Running our sample code
+
+```Python
+    list = [8,4,1,3,7]
+    result = sorted(list, key=functools.cmp_to_key(less_than))
+    print(f"{result=}")
+```
+again, we see
+
+```
+Comparing 3 to 4.
+Comparing 3 to 1.
+Comparing 7 to 3.
+Comparing 7 to 4.
+Comparing 7 to 8.
+result=[8, 7, 4, 3, 1]
+```
+
+YES!!
+
+I think that is definitive proof! Python really is listening to our wishes when we tell it to use our `less_than` function to determine how to sort our list of numbers.
 
 > Note: If you would like to know more about the need for wrapping `less_than` in `functtools.cmp_to_key` and why the parameter to `sorted` is named `key`, you can check out the Python documentation for [sorting](https://docs.python.org/3/howto/sorting.html).
+
+Take some time to look through the code and play with some additional examples. The more you use this technique, the more you will come to appreciate its power!
+
+Try to determine what would happen if `less_than` returns `0` in every case? That could lead to hilarity, couldn't it? Then, try to use the same `less_than` function with a list of strings! Or a list of characters! What about a list of instances of `class`es that you created?
+
+## Conclusion
+
+While we didn't get a complete hands-on sense for how to _write_ high-order functions, I think that we now have a pretty good sense for how to _use_ high-order functions. Throughout the remainder of these Functional Foundations we will explore more places where functions native to Python accept functions as arguments to control their behavior and we will learn how to write our own high-order functions. But, more than that, we will use high-order functions in order to understand, design and implement some of the most commonly used operations in functional programming. 
+
+Up first is the _fold_ operation.
