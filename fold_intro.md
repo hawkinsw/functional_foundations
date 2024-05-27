@@ -105,13 +105,13 @@ if __name__=="__main__":
 
 will print
 
-```console
+```
 summer(5, 2)=7
 ```
 
 Now, the big moment: Let's put it all together and sum up our list (`[1, 2, 3, 4, 5]`). The documentation for `reduce` includes the following information about the function and its parameters:
 
-```console
+```
 functools.reduce(function, iterable[, initializer])
 ```
 
@@ -146,7 +146,7 @@ if __name__=="__main__":
 
 prints
 
-```console
+```
 result=15
 ```
 
@@ -164,7 +164,7 @@ def summer(ip, next):
 
 And now, if we rerun our code, we see:
 
-```console
+```
 ip=0
 next=1
 ip=1
@@ -199,7 +199,7 @@ if __name__=="__main__":
 
 will print
 
-```console
+```
 concatenater('ab', 'a')='aba'
 ```
 
@@ -215,7 +215,7 @@ if __name__=="__main__":
 
 will print
 
-```console
+```
 result='abba'
 ```
 
@@ -230,7 +230,7 @@ def concatenater(ip, next):
     return ip + next
 ```
 
-```console
+```
 ip=''
 next='a'
 ip='a'
@@ -312,7 +312,7 @@ if __name__=="__main__":
 
 what would happen?
 
-```console
+```
 Traceback (most recent call last):
   File "fold_intro.py", line .., in <module>
     result = concatenater(5, 'e')
@@ -354,7 +354,7 @@ Found 3 errors in 1 file (checked 1 source file)
 
 So many errors, but they are all helpful! That said, let's look closely at the last of the error messages, because it is really insightful:
 
-```console
+```
 code\fold_intro.py: error: Argument 1 to "reduce" has incompatible type "Callable[[int, str], str]"; expected "Callable[[str, str], str]" 
 ```
 
@@ -373,7 +373,7 @@ def summer(ip: int, next: int) -> int:
 
 `mypy` thinks that `summer` has a type that looks like:
 
-```console
+```
 Revealed type is "def (ip: builtins.int, next: builtins.int) -> builtins.int"
 ```
 
@@ -392,7 +392,7 @@ if __name__=="__main__":
 
 and `mypy` says:
 
-```console
+```
 code\fold_intro.py: error: Argument 1 to "reduce" has incompatible type "Callable[[int, str], str]"; expected "Callable[[str, str], str]" 
  [arg-type]
  ```
