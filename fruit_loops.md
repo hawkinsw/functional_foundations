@@ -1,6 +1,7 @@
+> Note: The code for this Functional Foundation is in [`loops_or_recursion.py`](./code/loops_or_recursion.py).
 ## Fruit Loops
 
-It may surprise you to realize that programming languages exist that do not include loops! That's right, no for loop, no while loop and, certainly no do ... while loop. If you are just hearing that for the first time, it might throw you for a loop. Yes, you can definitely groan. Although it seems necessary to have loops in a language, it is most certainly not. In fact, you can express solutions for just as many computational problems in languages without loops as you can in languages with loops ... provided that you have 
+It may surprise you to realize that programming languages exist that do not include loops! That's right, no for loop, no while loop and, certainly no do ... while loop. If you are just hearing that for the first time, it might throw you for a loop. Yes, you can definitely groan. Although it seems necessary to have loops in a language, it is most certainly not. In fact, you can express solutions for just as many computational problems in languages without loops as you can in languages with loops ... provided that you have ...
 
 ### Recursion
 
