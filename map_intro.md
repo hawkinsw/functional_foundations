@@ -1,5 +1,7 @@
 # The Tropic of Capricorn
 
+> Note: This Functional Foundation implies that you need to have read/understood two earlier ones, but I do not believe that is necessary. Try to work through this Functional Foundation and if you need to return to earlier ones, there are links throughout.
+
 ## Introduction
 
 Now that you are an expert at understanding how [loops can be rewritten using recursion](./fruit_loops.md) and how [higher-order functions](./high_order_functions.md) can give us a tremendous amount of power to customize an otherwise dreary function that seems to only be good at doing a single thing, we are ready to tackle a task (football season is starting this weekend, after all!) that will combine the two.
@@ -16,7 +18,7 @@ As you know, the University is on a mission to educate as many people as possibl
 
 The IT staff has commissioned us to write some code that will go through a list of M Numbers in their current format and adjust each one so that:
 
-1. It has a total of $12 digits (all existing M Numbers will grow to $12$ digits by prepending $6$ `0`s) and
+1. It has a total of $12$ digits (all existing M Numbers will grow to $12$ digits by prepending $6$ `0`s) and
 2. It starts with a capital `M` -- the new Catalyst software requires that all userids start with a letter, and not a number (progress, right?).
 
 ### One At A Time
@@ -26,16 +28,22 @@ Just to get a sense of our task, here are a few examples of existing M Numbers:
 - `041485`
 - `090749`
 
-Although they are comprised of nothing but numbers, let's assume that they are actually stored in the UC database as strings.
+Although they are comprised of nothing but numbers, let's assume that they are actually stored in an internal UC database as strings.
 
-What would the skeleton of a Python function look like that accepts one of these old M Numbers and returns a new one? Well, we can't _really_ encode the length of the string in the type, so the most clear, concise and helpful type that we can probably use is something like:
+Ultimately we want our code to be able to transform _all_ the old-format M Numbers into the new-format M Numbers. But, let's walk before we run and think about a function that would transform _one_ old-format M Number into _one_ new-format M Number.
+
+The function will accept one of these old M Numbers and return a new one and we should make the signature of the function as specific as possible. After all there are tools out there that can analyze our Python and make sure that we don't call functions or use arguments with the wrong types. In Python, we can't _really_ encode the length of the string in the type,[^length-in-types] but we can be relatively clear, concise and helpful by giving the type of the function we are about to write (i.e., the one that takes a single old-format M Number and returns a single new-format M Number) as:
 
 ```Python
 def upgrade_m_number(existing: str) -> str:
     return ""
 ```
 
-Great. So, have a function named `upgrade_m_number` that takes a single parameter (with the type `str`) and returns a value whose type is also `str`.
+[^length-in-types]: In some languages, however, you can encode the length of a string into its type! How cool!
+
+Great. So, we have a function named `upgrade_m_number` whose signature[^signature] tells us that it takes a single parameter (with the type `str`) and returns a value whose type is also `str`.
+
+[^signature]: The signature of a function is "a declaration of the function's name along with its return type and the types and ordering of its parameters. Sometimes this (sic) is called a function prototype." (Tucker, A. B., & Noonan, R. (2007). Programming languages : principles and paradigms. Mcgraw-Hill Higher Education.) We will talk about this term during the semester!
 
 Just to be on the safe side, before the function upgrades an M Number, it should check that the given M Number is only 6 digits. That's just a little error handling. Then, if the given M Number is only 6 digits long, we will do the upgrade. Nothing fancy, then:
 
@@ -94,7 +102,7 @@ if __name__=="__main__":
 
 and record the output.
 
-But, well, we know that we can do better. And, the best part? We don't have to tell anyone that we automated the process and that we are just loafing while while the computer does the work but we pretend to do tons of ardous manual data manipulation.
+But, well, we know that we can do better. And, the best part? We don't have to tell anyone that we automated the process and that we are just loafing while while the computer does the work. We'll pretend to do tons of ardous manual data manipulation -- it'll be a secret!
 
 So, the University has given us the data in an array and they have named it `existing_m_numbers`. They want the results to be put into a list named `updated_m_numbers`. Okay, I think we all know what is going to come next ... loop!
 
@@ -123,34 +131,46 @@ updated_m_numbers=['M000000020982', 'M000000041485', 'M000000090749']
 
 You all know that copying-and-pasting and excessive typing always annoy me! So, I think that we should explore a way that we could accomplish our task without having to write a loop. I mean, we don't really have anything else to do while our code is running.
 
-But first, let's think about what we are really doing in the loop. We are taking a function (i.e., `upgrade_m_number`), applying it to each element in an existing list and building up a new list with the results of those calls. Pretty neat!
+Let's think about the situation as if it were a factory floor. There elements in the existing list are being delivered my conveyor belt to some machine. The machine accepts _one element at a time_ and converts it into some element with a different shape and then drops it on another conveyor belt which will take each new element to a storage location they are needed.
 
-Let's take our analysis one step further: The types of things in each of the lists (the one with the existing elements and the one with the updated elements) have a remarkable relationship to the types of the function that we are using over and over. 
+That seems like a fairly common thing to do. It would be neat if there was a way that the factory could be customized so that we could replace the processing machine whenever we wanted to transform items coming off the top conveyor belt into different types of items. 
 
-The items in the existing list have the same type as the input type to the function! And the items in the updated list have the same time as the output of the function! That's really neat. Hold that thought closely -- we will return to it before the end of this Functional Foundation.
+What would that machine _have_ to look like? Well, it would have to have the proper shape to fit between the two belts -- that's the first thing. Then, it would have to have an opening of the proper size so that it could catch the items dropping into it. Finally, it would have to have a properly-sized exit to emit the new elements that it produces onto the lower conveyor belt! Otherwise, and here is the cool thing, that machine can do whatever it wants to those elements!
 
-What would be really cool is if there were a function in Python that _mapped_ a given function over all the elements in a list that we provide! If that were the case, then we could (maybe!) remove that for loop and replace it with a single line of code!
+![](./images/MapMNumberUpgrade.png)
 
-Don't make say I told you so ... but, Python delivers the goods: [`map`](https://docs.python.org/3/library/functions.html#map). 
+So, if that is such a common scenario, why did we have to write it ourselves?  Why did _we_ have to write that `for` loop? What would be really cool is if there were a function in Python that did the _conveyoring_ for us! 
+
+If that were the case, _our_ job would be to deliver to the factory the machine to drop in between the belts and the items to place on the top conveyor belt one at a time.Python would do the rest!
+
+Don't look now, but ... but, Python delivers the goods: [`map`](https://docs.python.org/3/library/functions.html#map). 
 
 Before we get too excited, let's look at the documentation for `map` and see if we can figure out what goes where. Remember, we will need to give `map` two things:
 
-1. The function to repeatedly apply; and
-2. The list of elements.
+1. The function to repeatedly apply (a.k.a., the machine); and
+2. The list of elements (what is placed on the top conveyor belt).
 
-Bonus quiz: Because `map` will need to take a function as a parameter, that makes it a ...? That's right, a higher-order function!
+Bonus quiz: Because `map` will need to take a function as a parameter, that makes it a ...? That's right, a higher-order function![^answer]
+
+[^answer]: See [High Order Functions](./high_order_functions.md) for the definitions!
 
 Okay, back to that documentation:
 
-```
+```Python
  map(function, iterable, *iterables)
  ```
 
  The Python documentation goes on to say:
 
- > Return an iterator that applies function to every item of iterable, yielding the results. 
+ > Return an iterator that applies `function` to every item of `iterable`, yielding the results. 
 
  It goes on from there to talk about that magical `iterables` at the end, but we'll just assume it's not necessary for us.
+
+ In other words, let's think about `map` as a high-order function that looks like
+
+```Python
+ map(function, iterable)
+ ```
 
  Okay, so, when we want to use `map`, the first argument will be the function to apply to the list of elements, which we will give as the second argument.
 
@@ -187,9 +207,11 @@ But, if we run our updated code, we get
 updated_m_numbers=<map object at 0x70968d87ba20>
 ```
 
-What in the world? What's happening is that Python is trying to be, well, "helpful". Python thinks that maybe, just maybe, you won't actually access each of the elements in the list that the `map` function returns. So, Python stashes away the function that we gave as an argument and the list into an object. Then, just at the time that we access each element in the list, Python will invoke the function on a single element and return that updated element. Python is gambling that we will not access all (or even many) of the elements. And if that gamble pays off, then there will be a huge savings!
+What in the world? What's happening is that Python is trying to be, well, "helpful". Python thinks that maybe, just maybe, you won't actually access each of the elements in the list that the `map` function returns. They are being a frugal factory operator and making a bet that we will never come collect the material that are put into storage when they come off the lower belt.
 
-But, we can force Python's hand (these Vegas references are getting tiring) by putting the result inside `list`. That will make Python apply the function to every element immediately. With a small change
+Python stashes away the function that we gave as an argument and the list into an object. Then, just at the time that we access each element in the list, Python will invoke the function on a single element and return that updated element. Python is gambling that we will not access all (or even many) of the elements. And if that gamble pays off, then there will be a huge savings!
+
+But, we can force Python's hand (I had to switch to Vegas references because the factory analogy was getting tiresome) by putting the result inside `list`. That will make Python apply the function to every element immediately. With a small change
 
 
 ```Python
@@ -211,7 +233,7 @@ In the next edition of the Functional Foundations, we will take a look at how to
 
 ![](images/typesformap.png)
 
-Let's say that the function we gave to `map` takes a type named _Triangle_ and returns a type named _Pentagon_ (we are assuming that _Triangle_ and _Pentagon_ are placeholders for actual types -- in other words, they are like variables whose types are, uhm, types (wow!)). With just that information, we should be able to write out the type of the function `map`. (We will use `List[X]` to indicate a list of things, each of which has type `X`. We will use `Func[X,Y]` to indicate a function that takes a single parameter with the type `X` that returns a single value with the type `Y`.) 
+Let's say that the function we gave to `map` takes a type named _Triangle_ and returns a type named _Pentagon_ (we are assuming that _Triangle_ and _Pentagon_ are placeholders for actual types -- in other words, they are like variables whose types are, uhm, types (wow!)). With just that information, we should be able to write out the type of the function `map`. (We will use `List[X]` to indicate a list of things, each of which has type `X`. We will use `Func[[X],Y]` to indicate a function that takes a single parameter with the type `X` that returns a single value with the type `Y`.) 
 
 ```Python
 def map(Func[Triangle, Pentagon], List[Triangle]) -> List[Pentagon]:
